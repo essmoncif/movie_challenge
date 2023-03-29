@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class MovieService {
     public List<Movie> getRecommendedMovies(final String genre, List<Movie> movies) throws NotFoundException, InternalServerException {
         List<Movie> recommendedMovies = movies.stream()
                 .filter(movie -> movie.getGenre().equals(genre))
-                .sorted((movie1, movie2) -> (movie1.getReleaseYear() < movie2.getReleaseYear() ? movie2: movie1).getReleaseYear())
+                .sorted((Comparator.comparingInt(Movie::getReleaseYear).reversed()))
                 .collect(Collectors.toList());
         if (recommendedMovies.isEmpty())
             throw new NotFoundException(MessageError.NOT_FOUND_MOVIE);
